@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>つきあかり</title>
+<meta name="theme-color" content="#171221">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23ffdf9e'/%3E%3Ccircle cx='66' cy='42' r='36' fill='%23171221'/%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  background:linear-gradient(180deg,#151020 0%,#1f1626 55%,#2a1d22 100%);
+  color:#f2e8d9;
+  font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif;
+  overflow:hidden;user-select:none;-webkit-user-select:none
+}
+#bgStars{position:fixed;inset:0;pointer-events:none}
+#bgStars span{position:absolute;background:#fff;border-radius:50%;animation:tw linear infinite alternate}
+@keyframes tw{from{opacity:.1}to{opacity:.65}}
+#app{position:relative;height:100dvh;max-width:480px;margin:0 auto}
+.screen{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;padding:20px;text-align:center}
+.screen.active{display:flex}
+.cornerBtn{position:absolute;top:14px;z-index:20;width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);
+  color:#f2e8d9;font-size:19px;line-height:1;cursor:pointer}
+#muteBtn{right:14px}
+#backBtn{left:14px}
+.btn{background:linear-gradient(180deg,#f0c274,#c98d4b);color:#3a2410;border:none;border-radius:999px;
+  padding:16px 54px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:.1em;
+  box-shadow:0 4px 20px rgba(240,194,116,.25);cursor:pointer}
+.btn:active{transform:scale(.96)}
+
+/* home */
+.moonBig{font-size:82px;line-height:1;margin-top:7dvh;filter:drop-shadow(0 0 26px rgba(255,220,150,.5))}
+#moonName{opacity:.72;font-size:14px;margin-top:10px}
+h1{font-size:34px;font-weight:600;letter-spacing:.32em;text-indent:.32em;margin:22px 0 6px}
+.tag{opacity:.68;font-size:14px;margin:0 0 26px}
+.todayGame{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.08);
+  padding:10px 24px;border-radius:999px;font-size:15px;margin-bottom:20px}
+#homeNote{font-size:12.5px;opacity:.6;margin-top:16px;min-height:2.6em;line-height:1.7;padding:0 8px}
+#garden{position:absolute;bottom:0;left:0;right:0;height:132px;pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,rgba(36,50,32,.55) 42%,#1e2d1d 100%)}
+.flower{position:absolute;font-size:20px;transform-origin:bottom center;
+  filter:drop-shadow(0 0 6px rgba(255,240,180,.3));animation:sway 5s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-4deg)}to{transform:rotate(5deg)}}
+.fly{position:absolute;width:6px;height:6px;border-radius:50%;background:#ffe98a;
+  box-shadow:0 0 12px 4px rgba(255,233,138,.55);animation:float ease-in-out infinite alternate}
+@keyframes float{0%{transform:translate(0,0)}50%{transform:translate(16px,-18px)}100%{transform:translate(-12px,-8px)}}
+#gardenCount{position:absolute;right:14px;bottom:10px;font-size:12px;opacity:.6}
+
+/* game screen */
+#roundDots{display:flex;gap:11px;margin:50px 0 4px}
+#roundDots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16)}
+#roundDots i.on{background:#f0c274;box-shadow:0 0 9px rgba(240,194,116,.8)}
+#msg{min-height:1.6em;font-size:15.5px;opacity:.88;margin:12px 0 8px;line-height:1.6}
+#gameArea{flex:1;width:100%;display:flex;align-items:center;justify-content:center;min-height:0}
+
+/* ほしつなぎ */
+#sky{width:100%;height:100%;max-height:62dvh}
+#sky .star{fill:#cfc4b0;transform-box:fill-box;transform-origin:center;transition:fill .25s}
+#sky .star.lit{fill:#ffe9b0;filter:drop-shadow(0 0 3px rgba(255,230,160,.95))}
+#sky .star.wig{animation:wig .4s}
+@keyframes wig{25%{transform:translateX(1.6px)}75%{transform:translateX(-1.6px)}}
+#sky text{fill:rgba(255,240,210,.72);font-size:5px;pointer-events:none;font-family:inherit}
+#sky line{stroke:rgba(255,230,170,.5);stroke-width:.7;stroke-linecap:round;transition:stroke .5s}
+#sky.doneGlow .star{fill:#fff3cd;filter:drop-shadow(0 0 5px rgba(255,236,180,1))}
+#sky.doneGlow line{stroke:rgba(255,240,190,.95)}
+#sky.doneGlow text{opacity:0;transition:opacity .8s}
+#sky .hit{fill:transparent;cursor:pointer}
+
+/* いろしずく */
+#iroRow{display:flex;gap:8px;width:100%;justify-content:center;align-items:center;padding:0 10px}
+.drop{aspect-ratio:.82;flex:1;max-width:58px;border-radius:50%/44% 44% 56% 56%;position:relative;
+  transition:transform .18s;cursor:pointer;box-shadow:inset -4px -6px 10px rgba(0,0,0,.18),0 3px 8px rgba(0,0,0,.3)}
+.drop.sel{transform:translateY(-12px) scale(1.08);box-shadow:0 8px 18px rgba(0,0,0,.45),0 0 0 2px rgba(255,240,200,.85)}
+.drop.lock{cursor:default}
+.drop.lock::after{content:'';position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;
+  border-radius:50%;background:rgba(22,15,12,.55)}
+#iroRow.doneAnim .drop{animation:gl 1.3s ease}
+@keyframes gl{30%{filter:brightness(1.55) saturate(1.25)}}
+
+/* ともしび */
+#tomoRow{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:0 10px}
+.lantern{width:60px;height:78px;background:#241c2c;border:2px solid #4b3a50;border-radius:14px;
+  position:relative;transition:background .25s,box-shadow .25s,border-color .25s;cursor:pointer}
+.lantern::before,.lantern::after{content:'';position:absolute;left:13px;right:13px;height:6px;
+  background:#141019;border-radius:3px}
+.lantern::before{top:-9px}
+.lantern::after{bottom:-9px}
+.lantern.lit{background:radial-gradient(circle at 50% 58%,#ffe6a8 0%,#e3a35a 68%,#b0713a 100%);
+  box-shadow:0 0 32px 6px rgba(255,196,110,.45);border-color:#d8a86a}
+
+/* done */
+#done h2{font-size:27px;letter-spacing:.2em;text-indent:.2em;font-weight:600;margin:20px 0 10px}
+#doneMsg{font-size:15.5px;opacity:.85;line-height:1.9;margin:0 0 8px}
+#doneSub{font-size:12.5px;opacity:.55;margin:0 0 30px}
+</style>
+</head>
+<body>
+<div id="bgStars"></div>
+<div id="app">
+  <button id="muteBtn" class="cornerBtn">🔔</button>
+
+  <section id="home" class="screen">
+    <div class="moonBig" id="moonEmoji">🌕</div>
+    <div id="moonName"></div>
+    <h1>つきあかり</h1>
+    <p class="tag">今日の頭を、そっと閉じる。</p>
+    <div class="todayGame">今夜のあそび&ensp;<b id="gameName"></b></div>
+    <button id="startBtn" class="btn">はじめる</button>
+    <p id="homeNote"></p>
+    <div id="garden"></div>
+  </section>
+
+  <section id="game" class="screen">
+    <button id="backBtn" class="cornerBtn">✕</button>
+    <div id="roundDots"><i></i><i></i><i></i></div>
+    <p id="msg"></p>
+    <div id="gameArea"></div>
+  </section>
+
+  <section id="done" class="screen">
+    <div class="moonBig" id="doneMoon" style="margin-top:16dvh">🌕</div>
+    <h2>おやすみなさい</h2>
+    <p id="doneMsg"></p>
+    <p id="doneSub">また明日、月あかりの下で。</p>
+    <button id="homeBtn" class="btn">庭へもどる</button>
+  </section>
+</div>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const KEY = 'tsukiakari-v1';
+const S = Object.assign({flowers:0, fireflies:0, last:null, muted:false},
+  JSON.parse(localStorage.getItem(KEY) || '{}'));
+const save = () => localStorage.setItem(KEY, JSON.stringify(S));
+
+const now = new Date();
+const today = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
+const dayNum = Math.floor((Date.now() - now.getTimezoneOffset()*60000) / 86400000);
+
+/* ---------- 効果音(控えめ・WebAudio) ---------- */
+const fx = {
+  ctx: null,
+  ensure(){
+    if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if(this.ctx.state === 'suspended') this.ctx.resume();
+  },
+  tone(f, dur, delay, vol, type){
+    if(S.muted) return;
+    this.ensure();
+    dur = dur || .4; delay = delay || 0; vol = vol || .05; type = type || 'sine';
+    const t = this.ctx.currentTime + delay;
+    const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+    o.type = type; o.frequency.value = f;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + .04);
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(this.ctx.destination);
+    o.start(t); o.stop(t + dur + .1);
+  },
+  chime(){ [523.25, 659.25, 783.99, 1046.5].forEach((f,i) => this.tone(f, .8, i*.13, .035)); },
+  soft(){ this.tone(311, .3, 0, .022); }
+};
+
+$('#muteBtn').textContent = S.muted ? '🔕' : '🔔';
+$('#muteBtn').onclick = () => {
+  S.muted = !S.muted; save();
+  $('#muteBtn').textContent = S.muted ? '🔕' : '🔔';
+};
+
+/* ---------- 月相 ---------- */
+function moonInfo(){
+  const syn = 29.53058867;
+  const ref = Date.UTC(2000, 0, 6, 18, 14);
+  const ph = (((Date.now() - ref) / 86400000) % syn + syn) % syn / syn;
+  const idx = Math.round(ph * 8) % 8;
+  return {
+    emoji: ['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'][idx],
+    name:  ['新月','三日月','上弦の月','十三夜','満月','十六夜','下弦の月','有明の月'][idx]
+  };
+}
+
+/* ---------- 背景の星 ---------- */
+(function(){
+  const bg = $('#bgStars');
+  for(let i = 0; i < 42; i++){
+    const s = document.createElement('span');
+    const sz = 1 + Math.random() * 1.8;
+    s.style.cssText = 'left:' + (Math.random()*100) + '%;top:' + (Math.random()*72) + '%;'
+      + 'width:' + sz + 'px;height:' + sz + 'px;'
+      + 'animation-duration:' + (2.2 + Math.random()*3.5) + 's;'
+      + 'animation-delay:-' + (Math.random()*4) + 's';
+    bg.appendChild(s);
+  }
+})();
+
+/* ---------- 画面遷移 ---------- */
+function show(id){
+  document.querySelectorAll('.screen').forEach(el =>
+    el.classList.toggle('active', el.id === id));
+}
+const msg = t => { $('#msg').textContent = t; };
+
+/* ---------- セッション進行(3ラウンド) ---------- */
+const GAMES = [
+  {name:'ほしつなぎ', icon:'✦', start: startHoshi},
+  {name:'いろしずく', icon:'💧', start: startIro},
+  {name:'ともしび',   icon:'🏮', start: startTomo}
+];
+const gIdx = dayNum % 3;
+let round = 0;
+
+function renderDots(){
+  document.querySelectorAll('#roundDots i').forEach((el,i) =>
+    el.classList.toggle('on', i < round));
+}
+function startSession(){
+  round = 0; renderDots();
+  show('game');
+  GAMES[gIdx].start(round);
+}
+function clearRound(){
+  round++; renderDots();
+  fx.chime();
+  setTimeout(() => {
+    if(round >= 3) finishSession();
+    else GAMES[gIdx].start(round);
+  }, 1700);
+}
+function finishSession(){
+  let t;
+  if(S.last !== today){
+    if((S.flowers + S.fireflies) % 2 === 0){
+      S.flowers++; t = '庭に 月見草が ひとつ咲きました 🌼';
+    } else {
+      S.fireflies++; t = '庭に 蛍が 一匹 やってきました ✨';
+    }
+    S.last = today; save();
+  } else {
+    t = '今夜も おだやかな時間でした';
+  }
+  $('#doneMsg').textContent = t;
+  $('#doneMoon').textContent = moonInfo().emoji;
+  show('done');
+}
+$('#backBtn').onclick = () => { updateHome(); show('home'); };
+$('#homeBtn').onclick = () => { updateHome(); show('home'); };
+$('#startBtn').onclick = () => { fx.ensure(); startSession(); };
+
+/* ---------- 1. ほしつなぎ ---------- */
+function startHoshi(r){
+  msg('番号の順に 星をつないでね');
+  const n = 5 + r;
+  const pts = scatterStars(n);
+  const area = $('#gameArea');
+  area.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.id = 'sky';
+  svg.setAttribute('viewBox', '0 0 100 120');
+  area.appendChild(svg);
+
+  let cur = 0, busy = false;
+  pts.forEach((p, i) => {
+    const star = document.createElementNS(NS, 'circle');
+    star.setAttribute('cx', p.x); star.setAttribute('cy', p.y);
+    star.setAttribute('r', 2.3); star.setAttribute('class', 'star');
+    const label = document.createElementNS(NS, 'text');
+    label.setAttribute('x', p.x); label.setAttribute('y', p.y - 4.5);
+    label.setAttribute('text-anchor', 'middle');
+    label.textContent = i + 1;
+    const hit = document.createElementNS(NS, 'circle');
+    hit.setAttribute('cx', p.x); hit.setAttribute('cy', p.y);
+    hit.setAttribute('r', 8); hit.setAttribute('class', 'hit');
+    hit.addEventListener('pointerdown', () => {
+      if(busy) return;
+      if(i === cur){
+        star.classList.add('lit');
+        fx.tone(392 * Math.pow(2, cur/12) , .35, 0, .04);
+        if(cur > 0){
+          const q = pts[cur-1];
+          const line = document.createElementNS(NS, 'line');
+          line.setAttribute('x1', q.x); line.setAttribute('y1', q.y);
+          line.setAttribute('x2', p.x); line.setAttribute('y2', p.y);
+          svg.insertBefore(line, svg.firstChild);
+        }
+        cur++;
+        if(cur === n){
+          busy = true;
+          svg.classList.add('doneGlow');
+          msg('星座が できました');
+          setTimeout(clearRound, 1000);
+        }
+      } else if(!star.classList.contains('lit')){
+        star.classList.remove('wig'); void star.getBBox();
+        star.classList.add('wig');
+        fx.soft();
+      }
+    });
+    svg.appendChild(star); svg.appendChild(label); svg.appendChild(hit);
+  });
+}
+function scatterStars(n){
+  const pts = [];
+  let minD = 27;
+  while(pts.length < n){
+    let placed = false;
+    for(let t = 0; t < 200; t++){
+      const x = 13 + Math.random() * 74, y = 14 + Math.random() * 92;
+      if(pts.every(p => Math.hypot(p.x - x, p.y - y) >= minD)){
+        pts.push({x, y}); placed = true; break;
+      }
+    }
+    if(!placed) minD -= 2;
+  }
+  return pts;
+}
+
+/* ---------- 2. いろしずく ---------- */
+function startIro(r){
+  msg('しずくを入れかえて きれいなグラデーションに');
+  const n = 5 + r;
+  const h = Math.random() * 360;
+  const dh = (46 + Math.random() * 50) * (Math.random() < .5 ? -1 : 1);
+  const colorOf = step =>
+    'hsl(' + (((h + dh * step / (n-1)) % 360 + 360) % 360) + ',55%,' + (68 - 26 * step / (n-1)) + '%)';
+
+  let order = Array.from({length: n}, (_, i) => i);
+  do {
+    const mid = order.slice(1, n-1);
+    for(let i = mid.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [mid[i], mid[j]] = [mid[j], mid[i]];
+    }
+    order = [0, ...mid, n-1];
+  } while(order.every((v, i) => v === i));
+
+  const area = $('#gameArea');
+  area.innerHTML = '<div id="iroRow"></div>';
+  const row = $('#iroRow');
+  let sel = null, busy = false;
+
+  function render(){
+    row.innerHTML = '';
+    order.forEach((step, pos) => {
+      const d = document.createElement('div');
+      d.className = 'drop' + ((pos === 0 || pos === n-1) ? ' lock' : '') + (pos === sel ? ' sel' : '');
+      d.style.background = colorOf(step);
+      d.addEventListener('pointerdown', () => {
+        if(busy || pos === 0 || pos === n-1) return;
+        if(sel === null){ sel = pos; }
+        else if(sel === pos){ sel = null; }
+        else {
+          [order[sel], order[pos]] = [order[pos], order[sel]];
+          sel = null;
+          fx.tone(494, .18, 0, .03);
+          if(order.every((v, i) => v === i)){
+            busy = true;
+            render();
+            row.classList.add('doneAnim');
+            msg('しずくが 澄みました');
+            setTimeout(clearRound, 1100);
+            return;
+          }
+        }
+        render();
+      });
+      row.appendChild(d);
+    });
+  }
+  render();
+}
+
+/* ---------- 3. ともしび ---------- */
+function startTomo(r){
+  const count = 3 + r;
+  const seqLen = 3 + r;
+  const seq = [];
+  for(let i = 0; i < seqLen; i++){
+    let k;
+    do { k = Math.floor(Math.random() * count); } while(k === seq[i-1]);
+    seq.push(k);
+  }
+  const area = $('#gameArea');
+  area.innerHTML = '<div id="tomoRow"></div>';
+  const row = $('#tomoRow');
+  const notes = [392, 440, 523.25, 587.33, 659.25];
+  const lanterns = [];
+  for(let i = 0; i < count; i++){
+    const l = document.createElement('div');
+    l.className = 'lantern';
+    row.appendChild(l); lanterns.push(l);
+  }
+
+  let busy = true, pos = 0;
+  function light(i, dur){
+    lanterns[i].classList.add('lit');
+    fx.tone(notes[i], .5, 0, .04, 'triangle');
+    setTimeout(() => lanterns[i].classList.remove('lit'), dur || 430);
+  }
+  function playback(){
+    busy = true; pos = 0;
+    msg('あかりの順番を みててね');
+    seq.forEach((k, i) => setTimeout(() => light(k), 900 + i * 750));
+    setTimeout(() => {
+      busy = false;
+      msg('おなじ順番で 灯してね');
+    }, 900 + seq.length * 750);
+  }
+  lanterns.forEach((l, i) => l.addEventListener('pointerdown', () => {
+    if(busy) return;
+    if(i === seq[pos]){
+      light(i); pos++;
+      if(pos === seq.length){
+        busy = true;
+        msg('ぜんぶ 灯りました');
+        setTimeout(() => lanterns.forEach(x => x.classList.add('lit')), 500);
+        setTimeout(clearRound, 1100);
+      }
+    } else {
+      fx.soft();
+      msg('もういちど みてみましょう');
+      setTimeout(playback, 1100);
+      busy = true;
+    }
+  }));
+  playback();
+}
+
+/* ---------- ホーム・庭 ---------- */
+function updateHome(){
+  const m = moonInfo();
+  $('#moonEmoji').textContent = m.emoji;
+  $('#moonName').textContent = '今夜は ' + m.name;
+  const g = GAMES[gIdx];
+  $('#gameName').textContent = g.icon + ' ' + g.name;
+  const played = S.last === today;
+  $('#startBtn').textContent = played ? 'もうひとあそび' : 'はじめる';
+  $('#homeNote').textContent = played
+    ? '今日のぶんは咲きました。眺めるだけでも、もうひとあそびでも。'
+    : '1日3分。おやすみ前に、ひとつだけ。';
+  renderGarden();
+}
+function renderGarden(){
+  const g = $('#garden');
+  g.innerHTML = '';
+  for(let i = 0; i < S.flowers; i++){
+    const f = document.createElement('div');
+    f.className = 'flower';
+    f.textContent = '🌼';
+    f.style.left = (6 + (i * 37 + 11) % 88) + '%';
+    f.style.bottom = (8 + (i * 17) % 26) + 'px';
+    f.style.fontSize = (17 + (i * 7) % 9) + 'px';
+    f.style.animationDelay = '-' + (i * 1.3) + 's';
+    g.appendChild(f);
+  }
+  for(let i = 0; i < S.fireflies; i++){
+    const f = document.createElement('div');
+    f.className = 'fly';
+    f.style.left = (10 + (i * 43 + 23) % 80) + '%';
+    f.style.bottom = (42 + (i * 29) % 60) + 'px';
+    f.style.animationDuration = (4.5 + (i * 13) % 40 / 10) + 's';
+    f.style.animationDelay = '-' + (i * 2.1) + 's';
+    g.appendChild(f);
+  }
+  if(S.flowers + S.fireflies > 0){
+    const c = document.createElement('div');
+    c.id = 'gardenCount';
+    c.textContent = '🌼 ' + S.flowers + ' ・ ✨ ' + S.fireflies;
+    g.appendChild(c);
+  }
+}
+
+updateHome();
+show('home');
+</script>
+</body>
+</html>
