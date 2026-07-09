@@ -54,7 +54,10 @@
 
 ## ファイル構成
 
-- `index.html` — アプリ全体（HTML + CSS + JS すべてインライン。単一ファイル構成）
+- `index.html` — アプリ全体（HTML + CSS + JS すべてインライン）
+- `manifest.json` / `sw.js` — PWA対応（ホーム画面追加・オフライン動作）。swはネットワーク優先なのでpush後の更新は普通に反映される
+- `icon-source.html` — PWAアイコンの元。変更したら以下で再生成:
+  `chrome --headless --window-size=512,512 --hide-scrollbars --screenshot=icon-512.png file://.../icon-source.html` → `sips -z 192 192 icon-512.png --out icon-192.png`
 
 ## デプロイ
 
@@ -77,5 +80,5 @@
 - [x] ともしび（2026-07-09）
 - [x] よるの庭（コレクション・保存・月相演出）（2026-07-09）
 - [x] ほしつなぎ改修: 実在星座10種+完成時の名前・イラスト演出+5問化（2026-07-09）
-- [ ] PWA対応（manifest + アイコン）
+- [x] PWA対応（manifest + 三日月アイコン + sw.jsオフライン対応）（2026-07-10）
 - [ ] 実機での音量・操作感の調整（ユーザーフィードバック待ち）
