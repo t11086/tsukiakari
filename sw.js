@@ -1,8 +1,8 @@
 /* つきあかり service worker
    ページ本体はネットワーク優先(更新が即反映される)、
    落ちていたらキャッシュから返してオフラインでも遊べる */
-const CACHE = 'tsukiakari-v1';
-const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const CACHE = 'tsukiakari-v2';
+const ASSETS = ['./', './index.html', './yozora-data.js', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));

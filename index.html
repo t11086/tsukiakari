@@ -30,7 +30,7 @@ body{
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);
   color:#f2e8d9;font-size:19px;line-height:1;cursor:pointer}
 #muteBtn{right:14px}
-#backBtn,#zukanBack{left:14px}
+#backBtn,#zukanBack,#oekakiBack{left:14px}
 .btn{background:linear-gradient(180deg,#f0c274,#c98d4b);color:#3a2410;border:none;border-radius:999px;
   padding:16px 54px;font-size:18px;font-weight:700;font-family:inherit;letter-spacing:.1em;
   box-shadow:0 4px 20px rgba(240,194,116,.25);cursor:pointer}
@@ -41,7 +41,7 @@ body{
 #moonName{opacity:.72;font-size:14px;margin-top:10px}
 h1{font-size:34px;font-weight:600;letter-spacing:.32em;text-indent:.32em;margin:22px 0 6px}
 .tag{opacity:.68;font-size:14px;margin:0 0 26px}
-#gameSel{display:flex;gap:10px;margin-bottom:22px}
+#gameSel{display:grid;grid-template-columns:repeat(2,1fr);gap:13px 10px;width:min(100%,330px);margin-bottom:22px}
 .gchip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;
   padding:12px 14px 10px;min-width:88px;color:#f2e8d9;font-family:inherit;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;transition:all .2s}
@@ -116,11 +116,49 @@ h1{font-size:34px;font-weight:600;letter-spacing:.32em;text-indent:.32em;margin:
 .lantern.lit{background:radial-gradient(circle at 50% 58%,#ffe6a8 0%,#e3a35a 68%,#b0713a 100%);
   box-shadow:0 0 32px 6px rgba(255,196,110,.45);border-color:#d8a86a}
 
-/* せいざのきろく */
-#zukanBtn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:999px;
-  color:#f2e8d9;font-family:inherit;font-size:13px;padding:9px 22px;margin-top:10px;cursor:pointer}
-#zukan h2{font-size:20px;letter-spacing:.25em;text-indent:.25em;font-weight:600;margin:52px 0 2px}
-#zukanCount{font-size:12px;opacity:.6;margin:4px 0 0}
+/* よぞらロジック */
+#yzWrap{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%}
+#yzBoard{display:grid}
+.yzh{display:flex;align-items:center;justify-content:flex-end;gap:4px;font-size:11px;color:#e8dcc8;
+  opacity:.8;padding-right:7px;line-height:1}
+.yzh.col{flex-direction:column;justify-content:flex-end;gap:2.5px;padding:0 0 6px;align-items:center}
+.yzc{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(242,232,217,.42);
+  transition:background .12s}
+.yzc.bl{border-left-color:rgba(255,255,255,.34)}
+.yzc.bt{border-top-color:rgba(255,255,255,.34)}
+.yzc.fill{background:#e8dcc8}
+.yzc.mark::after{content:'✕'}
+.yzc.hintGlow{animation:yzg .9s}
+@keyframes yzg{40%{box-shadow:0 0 14px rgba(255,233,176,.95);background:rgba(255,233,176,.55)}}
+#yzBoard.done .yzc{border-color:transparent;background:transparent;transition:all .9s;border-radius:24%}
+#yzBoard.done .yzh{opacity:0;transition:opacity .9s}
+#yzTools{display:flex;gap:9px}
+.yzTool{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:999px;
+  color:#f2e8d9;font-family:inherit;font-size:13px;padding:9px 15px;cursor:pointer}
+.yzTool.sel{border-color:rgba(240,194,116,.85);background:rgba(240,194,116,.14);color:#ffe9b0}
+.yzInput{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.22);border-radius:10px;
+  color:#f2e8d9;font-family:inherit;font-size:14px;padding:11px;text-align:center;letter-spacing:.06em;
+  margin:14px 0 10px}
+.yzInput::placeholder{color:rgba(242,232,217,.35)}
+.yzSmallBtn{background:linear-gradient(180deg,#f0c274,#c98d4b);color:#3a2410;border:none;border-radius:999px;
+  padding:11px 28px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+.yzNote{font-size:11.5px;opacity:.55;margin-top:10px;line-height:1.7}
+
+/* せいざのきろく・おえかきのきろく */
+#recBtns{display:flex;gap:8px;margin-top:10px}
+#zukanBtn,#oekakiBtn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:999px;
+  color:#f2e8d9;font-family:inherit;font-size:13px;padding:9px 18px;cursor:pointer}
+#zukan h2,#oekaki h2{font-size:20px;letter-spacing:.25em;text-indent:.25em;font-weight:600;margin:52px 0 2px}
+#zukanCount,#oekakiCount{font-size:12px;opacity:.6;margin:4px 0 0}
+#oekakiGrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%;flex:1;min-height:0;
+  overflow-y:auto;padding:14px 4px 30px;align-content:start}
+.ocard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;
+  padding:12px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:7px}
+.ocard canvas{width:54px;height:54px;image-rendering:pixelated}
+.ocard .on{font-size:11px}
+.ocard .oq{width:54px;height:54px;display:flex;align-items:center;justify-content:center;font-size:21px;opacity:.55}
+.ocard.unknown{opacity:.45}
 #zukanGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;flex:1;min-height:0;
   overflow-y:auto;padding:14px 4px 30px;align-content:start}
 .zcard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;
@@ -150,7 +188,10 @@ h1{font-size:34px;font-weight:600;letter-spacing:.32em;text-indent:.32em;margin:
     <div id="gameSel"></div>
     <button id="startBtn" class="btn">はじめる</button>
     <p id="homeNote"></p>
-    <button id="zukanBtn">✦ せいざのきろく</button>
+    <div id="recBtns">
+      <button id="zukanBtn">✦ せいざ</button>
+      <button id="oekakiBtn">🖼 おえかき</button>
+    </div>
     <div id="garden"></div>
   </section>
 
@@ -159,6 +200,13 @@ h1{font-size:34px;font-weight:600;letter-spacing:.32em;text-indent:.32em;margin:
     <h2>せいざのきろく</h2>
     <div id="zukanCount"></div>
     <div id="zukanGrid"></div>
+  </section>
+
+  <section id="oekaki" class="screen">
+    <button id="oekakiBack" class="cornerBtn">✕</button>
+    <h2>おえかきのきろく</h2>
+    <div id="oekakiCount"></div>
+    <div id="oekakiGrid"></div>
   </section>
 
   <section id="game" class="screen">
@@ -177,11 +225,13 @@ h1{font-size:34px;font-weight:600;letter-spacing:.32em;text-indent:.32em;margin:
   </section>
 </div>
 
+<script src="yozora-data.js"></script>
 <script>
 'use strict';
 const $ = s => document.querySelector(s);
 const KEY = 'tsukiakari-v1';
-const S = Object.assign({flowers:0, fireflies:0, last:null, muted:false, found:[]},
+const S = Object.assign({flowers:0, fireflies:0, last:null, muted:false, found:[],
+    yzDone:[], yzUnlocked:false},
   JSON.parse(localStorage.getItem(KEY) || '{}'));
 const save = () => localStorage.setItem(KEY, JSON.stringify(S));
 
@@ -256,15 +306,17 @@ const msg = t => { $('#msg').textContent = t; };
 const GAMES = [
   {name:'ほしつなぎ', icon:'✦', start: startHoshi, rounds: 5},
   {name:'いろしずく', icon:'💧', start: startIro, rounds: 3},
-  {name:'ともしび',   icon:'🏮', start: startTomo, rounds: 3}
+  {name:'ともしび',   icon:'🏮', start: startTomo, rounds: 3},
+  {name:'よぞらロジック', icon:'▦', start: startYozora, rounds: 1}
 ];
-const recIdx = dayNum % 3;   /* 今夜のおすすめ(日替わり) */
+const recIdx = dayNum % GAMES.length;   /* 今夜のおすすめ(日替わり) */
 let gIdx = recIdx;           /* 遊ぶゲーム(ホームで選択可) */
 let round = 0;
 
 function renderDots(){
   const rd = $('#roundDots');
   rd.innerHTML = '';
+  rd.style.visibility = GAMES[gIdx].rounds === 1 ? 'hidden' : 'visible';
   for(let i = 0; i < GAMES[gIdx].rounds; i++){
     const d = document.createElement('i');
     if(i < round) d.classList.add('on');
@@ -572,6 +624,189 @@ function startTomo(r){
   playback();
 }
 
+/* ---------- 4. よぞらロジック ---------- */
+/* 問題データは yozora-data.js(全問 tools/yozora-validate.js で唯一解を機械検証済み)。
+   先頭 YOZORA.FREE 問が無料。以降は買い切り「よぞらパック」(解除コード方式) */
+const YZ_HASH = '7d05af5c867049b02ad41d74b12eeeae7294ac77437adb3cdcac3192fe9cb459';
+const YZ_BUY_URL = '';   /* 決済リンクができたらここに入れる(空なら「準備中」表示) */
+
+function yzHints(line){
+  const h = [];
+  let run = 0;
+  line.forEach(v => { if(v) run++; else if(run){ h.push(run); run = 0; } });
+  if(run) h.push(run);
+  return h.length ? h : [0];
+}
+const yzAccessible = () =>
+  YOZORA.puzzles.filter((p, i) => S.yzUnlocked || i < YOZORA.FREE);
+
+function startYozora(){
+  const acc = yzAccessible();
+  let p = acc.find(x => !S.yzDone.includes(x.id));
+  if(!p && !S.yzUnlocked){ renderYzPack(); return; }
+  if(!p) p = acc[Math.floor(Math.random() * acc.length)];
+  renderYzBoard(p);
+}
+
+function renderYzBoard(p){
+  msg('かずを たよりに ますをぬって、絵をさがしてね');
+  const n = p.pic.length;
+  const sol = p.pic.map(row => [...row].map(ch => ch === '#'));
+  const rowH = sol.map(yzHints);
+  const colH = Array.from({length: n}, (_, c) => yzHints(sol.map(row => row[c])));
+  const px = n === 5 ? 44 : n === 8 ? 33 : 27;
+  const sep = n === 10 ? 5 : n === 8 ? 4 : 99;   /* 5目盛りの太線 */
+  const area = $('#gameArea');
+  area.innerHTML = '<div id="yzWrap"><div id="yzBoard"></div><div id="yzTools">'
+    + '<button class="yzTool sel" id="yzFill">■ ぬる</button>'
+    + '<button class="yzTool" id="yzMark">✕ しるし</button>'
+    + '<button class="yzTool" id="yzHint">🌙 おしえて</button>'
+    + '</div></div>';
+  const board = $('#yzBoard');
+  board.style.gridTemplateColumns = 'auto repeat(' + n + ',' + px + 'px)';
+  board.style.gridTemplateRows = 'auto repeat(' + n + ',' + px + 'px)';
+
+  const st = Array.from({length: n}, () => new Array(n).fill(0)); /* 0あき 1ぬり 2しるし */
+  let mode = 1, busy = false;
+  const cellEls = [];
+
+  board.appendChild(document.createElement('div'));
+  for(let c = 0; c < n; c++){
+    const h = document.createElement('div');
+    h.className = 'yzh col';
+    colH[c].forEach(v => {
+      const s = document.createElement('span');
+      s.textContent = v;
+      h.appendChild(s);
+    });
+    board.appendChild(h);
+  }
+  for(let r = 0; r < n; r++){
+    const h = document.createElement('div');
+    h.className = 'yzh';
+    rowH[r].forEach(v => {
+      const s = document.createElement('span');
+      s.textContent = v;
+      h.appendChild(s);
+    });
+    board.appendChild(h);
+    cellEls[r] = [];
+    for(let c = 0; c < n; c++){
+      const d = document.createElement('div');
+      d.className = 'yzc' + (c > 0 && c % sep === 0 ? ' bl' : '')
+                          + (r > 0 && r % sep === 0 ? ' bt' : '');
+      d.addEventListener('pointerdown', () => {
+        if(busy) return;
+        if(mode === 1) st[r][c] = st[r][c] === 1 ? 0 : 1;
+        else           st[r][c] = st[r][c] === 2 ? 0 : 2;
+        paint(r, c);
+        if(st[r][c]) fx.tone(st[r][c] === 1 ? 494 : 370, .1, 0, .016);
+        check();
+      });
+      board.appendChild(d);
+      cellEls[r][c] = d;
+    }
+  }
+  function paint(r, c){
+    cellEls[r][c].classList.toggle('fill', st[r][c] === 1);
+    cellEls[r][c].classList.toggle('mark', st[r][c] === 2);
+  }
+  $('#yzFill').onclick = () => { mode = 1; $('#yzFill').classList.add('sel'); $('#yzMark').classList.remove('sel'); };
+  $('#yzMark').onclick = () => { mode = 2; $('#yzMark').classList.add('sel'); $('#yzFill').classList.remove('sel'); };
+  /* 責めないヒント: まちがいをそっと戻す。なければ1マスだけおしえる */
+  $('#yzHint').onclick = () => {
+    if(busy) return;
+    const wrong = [], missing = [];
+    for(let r = 0; r < n; r++) for(let c = 0; c < n; c++){
+      if(st[r][c] === 1 && !sol[r][c]) wrong.push([r, c]);
+      if(st[r][c] !== 1 && sol[r][c]) missing.push([r, c]);
+    }
+    const pool = wrong.length ? wrong : missing;
+    if(!pool.length) return;
+    const [r, c] = pool[Math.floor(Math.random() * pool.length)];
+    st[r][c] = wrong.length ? 0 : 1;
+    paint(r, c);
+    cellEls[r][c].classList.remove('hintGlow');
+    void cellEls[r][c].offsetWidth;
+    cellEls[r][c].classList.add('hintGlow');
+    fx.soft();
+    check();
+  };
+  function check(){
+    for(let r = 0; r < n; r++) for(let c = 0; c < n; c++)
+      if((st[r][c] === 1) !== sol[r][c]) return;
+    busy = true;
+    board.classList.add('done');
+    for(let r = 0; r < n; r++) for(let c = 0; c < n; c++){
+      cellEls[r][c].classList.remove('mark');
+      if(sol[r][c]) cellEls[r][c].style.background = p.color;
+    }
+    const newFound = !S.yzDone.includes(p.id);
+    if(newFound){ S.yzDone.push(p.id); save(); }
+    msg('「' + p.name + '」が できました ✨');
+    setTimeout(() => {
+      const card = document.createElement('div');
+      card.className = 'storyCard';
+      card.innerHTML = '<div class="scName">' + p.name + '</div>'
+        + '<p class="scText">' + p.words + '</p>'
+        + (newFound ? '<div class="scNote">🖼 おえかきのきろくに 記録しました</div>' : '')
+        + '<div class="scNext">タップして おわる</div>';
+      card.addEventListener('pointerdown', () => {
+        card.style.pointerEvents = 'none';
+        card.classList.remove('show');
+        clearRound();
+      }, {once: true});
+      area.appendChild(card);
+      requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('show')));
+    }, 1200);
+  }
+}
+
+/* 無料ぶんを解き終えたときの案内(買い切り+解除コード入力) */
+function renderYzPack(){
+  msg('');
+  const total = YOZORA.puzzles.length;
+  const area = $('#gameArea');
+  area.innerHTML = '';
+  const card = document.createElement('div');
+  card.className = 'storyCard show';
+  card.style.cursor = 'default';
+  card.innerHTML = '<div class="scName">🌌 よぞらパック</div>'
+    + '<p class="scText">むりょうの' + YOZORA.FREE + 'まいが ぜんぶ完成しました。'
+    + 'つづきの' + (total - YOZORA.FREE) + 'まい(おおきな絵)は、買い切りの「よぞらパック」でひらけます。</p>'
+    + (YZ_BUY_URL
+      ? '<a class="yzSmallBtn" style="display:block;text-align:center;text-decoration:none;margin-top:14px" href="'
+        + YZ_BUY_URL + '" target="_blank" rel="noopener">パックを買う</a>'
+      : '<div class="yzNote">いまは販売の準備中です。もうすこし お待ちください。</div>')
+    + '<input class="yzInput" id="yzCode" placeholder="かいじょコード" autocomplete="off">'
+    + '<div style="display:flex;gap:10px;justify-content:center">'
+    + '<button class="yzSmallBtn" id="yzCodeBtn">ひらく</button>'
+    + '<button class="yzTool" id="yzReplay">もういちど あそぶ</button></div>'
+    + '<div class="yzNote" id="yzCodeMsg"></div>';
+  area.appendChild(card);
+  $('#yzReplay').onclick = () => {
+    const acc = yzAccessible();
+    renderYzBoard(acc[Math.floor(Math.random() * acc.length)]);
+  };
+  $('#yzCodeBtn').onclick = async () => {
+    const v = ($('#yzCode').value || '').trim().toUpperCase();
+    if(!v) return;
+    if(!(window.crypto && crypto.subtle)){
+      $('#yzCodeMsg').textContent = 'この環境では ひらけないようです';
+      return;
+    }
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+    const hex = [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+    if(hex === YZ_HASH){
+      S.yzUnlocked = true; save();
+      fx.chime();
+      startYozora();
+    } else {
+      $('#yzCodeMsg').textContent = 'コードが ちがうみたいです';
+    }
+  };
+}
+
 /* ---------- ホーム・庭 ---------- */
 function updateHome(){
   const m = moonInfo();
@@ -592,11 +827,46 @@ function updateHome(){
   $('#homeNote').textContent = played
     ? '今日のぶんは咲きました。眺めるだけでも、もうひとあそびでも。'
     : '1日3分。おやすみ前に、ひとつだけ。';
-  $('#zukanBtn').textContent = '✦ せいざのきろく ' + S.found.length + '/' + CONSTELLATIONS.length;
+  $('#zukanBtn').textContent = '✦ せいざ ' + S.found.length + '/' + CONSTELLATIONS.length;
+  $('#oekakiBtn').textContent = '🖼 おえかき ' + S.yzDone.length + '/' + YOZORA.puzzles.length;
   renderGarden();
 }
 $('#zukanBtn').onclick = () => { renderZukan(); show('zukan'); };
 $('#zukanBack').onclick = () => { updateHome(); show('home'); };
+$('#oekakiBtn').onclick = () => { renderOekaki(); show('oekaki'); };
+$('#oekakiBack').onclick = () => { updateHome(); show('home'); };
+function renderOekaki(){
+  const total = YOZORA.puzzles.length;
+  $('#oekakiCount').textContent = S.yzDone.length + ' / ' + total
+    + (S.yzDone.length === total ? '  ぜんぶ完成しました 🌟' : '');
+  const grid = $('#oekakiGrid');
+  grid.innerHTML = '';
+  YOZORA.puzzles.forEach((p, i) => {
+    const locked = !S.yzUnlocked && i >= YOZORA.FREE;
+    const card = document.createElement('div');
+    if(S.yzDone.includes(p.id)){
+      card.className = 'ocard';
+      const n = p.pic.length;
+      const cv = document.createElement('canvas');
+      cv.width = cv.height = n;
+      const ctx = cv.getContext('2d');
+      ctx.fillStyle = p.color;
+      p.pic.forEach((row, r) => [...row].forEach((ch, c) => {
+        if(ch === '#') ctx.fillRect(c, r, 1, 1);
+      }));
+      const nm = document.createElement('span');
+      nm.className = 'on';
+      nm.textContent = p.name;
+      card.appendChild(cv);
+      card.appendChild(nm);
+    } else {
+      card.className = 'ocard unknown';
+      card.innerHTML = '<div class="oq">' + (locked ? '🔒' : '？') + '</div>'
+        + '<span class="on">' + (locked ? 'よぞらパック' : p.pic.length + '×' + p.pic.length) + '</span>';
+    }
+    grid.appendChild(card);
+  });
+}
 function renderZukan(){
   $('#zukanCount').textContent = S.found.length + ' / ' + CONSTELLATIONS.length
     + (S.found.length === CONSTELLATIONS.length ? '  ぜんぶ見つけました 🌟' : '');
