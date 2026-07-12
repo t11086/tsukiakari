@@ -68,7 +68,7 @@ h1{font-size:34px;font-weight:600;letter-spacing:.32em;text-indent:.32em;margin:
 #roundDots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16)}
 #roundDots i.on{background:#f0c274;box-shadow:0 0 9px rgba(240,194,116,.8)}
 #msg{min-height:1.6em;font-size:15.5px;opacity:.88;margin:12px 0 8px;line-height:1.6}
-#gameArea{flex:1;width:100%;display:flex;align-items:center;justify-content:center;min-height:0}
+#gameArea{flex:1;width:100%;display:flex;align-items:center;justify-content:center;min-height:0;position:relative}
 
 /* ほしつなぎ */
 #sky{width:100%;height:100%;max-height:62dvh}
@@ -83,11 +83,16 @@ h1{font-size:34px;font-weight:600;letter-spacing:.32em;text-indent:.32em;margin:
 #sky.doneGlow line{stroke:rgba(255,240,190,.95)}
 #sky.doneGlow .num{opacity:0}
 #sky .hit{fill:transparent;cursor:pointer}
-#sky .cpic,#sky .cname{opacity:0;transition:opacity 1.8s ease;pointer-events:none}
-#sky .cpic{font-size:52px;filter:blur(1px) sepia(.4)}
-#sky .cname{font-size:7.5px;fill:#ffe9b0;letter-spacing:.12em}
-#sky.reveal .cpic{opacity:.15}
-#sky.reveal .cname{opacity:.92}
+.storyCard{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(88%,330px);
+  background:rgba(26,19,32,.94);border:1px solid rgba(255,225,160,.26);border-radius:18px;
+  padding:22px 22px 16px;cursor:pointer;opacity:0;transition:opacity .9s ease;
+  box-shadow:0 10px 34px rgba(0,0,0,.5)}
+.storyCard.show{opacity:1}
+.scName{color:#ffe9b0;font-size:17px;letter-spacing:.18em;margin-bottom:12px}
+.scText{margin:0;font-size:14px;line-height:2;opacity:.9;text-align:left}
+.scNote{font-size:12px;opacity:.6;margin-top:12px}
+.scNext{font-size:12px;opacity:0;margin-top:14px;animation:scHint 1s ease 1.6s forwards}
+@keyframes scHint{to{opacity:.55}}
 
 /* いろしずく */
 #iroRow{display:flex;gap:8px;width:100%;justify-content:center;align-items:center;padding:0 10px}
@@ -305,50 +310,62 @@ $('#startBtn').onclick = () => { fx.ensure(); startSession(); };
 const CONSTELLATIONS = [
   {name:'みなみじゅうじ座', emoji:'🌟',
    trivia:'日本からはほぼ見えない、南半球の空の目印',
+   story:'南半球では方角を知るための大切な目印。日本でも沖縄のいちばん南の島まで行くと、水平線の近くにちらりと顔を出すことがあるそうです。',
    stars:[[50,10],[46,74],[20,42],[76,34]],
    edges:[[0,1],[2,3]]},
   {name:'カシオペヤ座', emoji:'👑',
    trivia:'W字はお妃さまの椅子のかたち。北の空で一年中見える',
+   story:'W字は、椅子にすわったお妃さまの姿。「わたしは海の妖精より美しい」と自慢したばかりに、椅子ごと空をぐるぐる回り続けることになったのだとか。北の空でいつでも会えます。',
    stars:[[8,50],[27,26],[50,44],[72,22],[92,40]],
    edges:[[0,1],[1,2],[2,3],[3,4]]},
   {name:'こと座', emoji:'🎻',
    trivia:'いちばん明るい星はベガ。七夕のおりひめ星',
+   story:'竪琴の名手オルフェウスの琴が空にのぼったもの。いちばん明るいベガは七夕のおりひめ星で、じつは太陽の何十倍もまぶしく光る星です。',
    stars:[[50,8],[38,30],[62,34],[66,62],[42,58]],
    edges:[[0,1],[1,2],[2,3],[3,4],[4,1]]},
   {name:'いるか座', emoji:'🐬',
    trivia:'夏の空にひっそり浮かぶ、小さなひし形',
+   story:'海に投げ出された歌びとを背に乗せて助けたイルカが、ごほうびに空へ上げられたという言い伝えがあります。小さな星座なので、見つけられたらちょっと得した気分に。',
    stars:[[42,26],[56,18],[68,30],[54,40],[36,62]],
    edges:[[0,1],[1,2],[2,3],[3,0],[3,4]]},
   {name:'はくちょう座', emoji:'🦢',
    trivia:'尾のデネブは夏の大三角のひとつ。天の川を渡る白鳥',
+   story:'白鳥は翼を広げて、天の川の流れの上をまっすぐ渡るように飛んでいます。尾のデネブと、ベガ・アルタイルを結ぶと夏の大三角のできあがり。',
    stars:[[50,8],[50,38],[50,80],[16,26],[84,52]],
    edges:[[0,1],[1,2],[1,3],[1,4]]},
   {name:'わし座', emoji:'🦅',
    trivia:'いちばん明るい星はアルタイル。七夕のひこ星',
+   story:'アルタイルは七夕のひこ星。おりひめ星のベガとは天の川をはさんで向かいあっていて、その距離は光の速さで15年ほど。会えるのが年に一度なのも、うなずけます。',
    stars:[[50,10],[26,32],[74,36],[50,52],[44,82]],
    edges:[[0,1],[0,2],[1,3],[2,3],[3,4]]},
   {name:'おうし座', emoji:'🐂',
    trivia:'冬の星座。V字の顔に赤い目のアルデバラン',
+   story:'赤く光る目のアルデバランは、日本では「あかぼし」とも呼ばれてきました。牛の肩のあたりには、星の集まり「すばる」がひっそりときらめいています。',
    stars:[[20,12],[38,42],[50,62],[62,44],[82,14]],
    edges:[[0,1],[1,2],[2,3],[3,4]]},
   {name:'ペガスス座', emoji:'🐴',
    trivia:'秋の四辺形が翼のある馬の胴体',
+   story:'翼をもつ白い馬。胴体にあたる大きな四角形は「秋の四辺形」と呼ばれ、明るい星の少ない秋の夜空で、静かな目印になってくれます。',
    stars:[[38,16],[76,22],[72,58],[34,54],[20,68],[10,82]],
    edges:[[0,1],[1,2],[2,3],[3,0],[3,4],[4,5]]},
   {name:'北斗七星', emoji:'🐻',
    trivia:'おおぐま座のしっぽ。ひしゃくの先は北極星への道しるべ',
+   story:'ひしゃくの先のふたつの星を5倍のばした先に、北極星があります。地図のなかった時代、旅人はこの七つの星をたよりに夜道を歩いたそうです。',
    stars:[[86,22],[82,44],[62,50],[60,28],[44,34],[28,40],[10,52]],
    edges:[[0,1],[1,2],[2,3],[3,0],[3,4],[4,5],[5,6]]},
   {name:'オリオン座', emoji:'🏹',
    trivia:'冬の空の代表。ななめに並ぶ三つ星が目印',
+   story:'ななめに並ぶ三つ星のすぐ下に、ぼんやりかすんで見えるところがあります。そこはオリオン大星雲、いまも新しい星が生まれている場所です。',
    stars:[[70,14],[34,18],[42,46],[50,50],[58,54],[28,84],[68,80]],
    edges:[[0,1],[1,2],[2,3],[3,4],[4,0],[2,5],[4,6]]},
   {name:'ふたご座', emoji:'👯',
    trivia:'カストルとポルックス、仲よし兄弟の頭の星',
+   story:'仲よし兄弟の頭にあたるのがカストルとポルックス。よく見るとひとつは白っぽく、もうひとつはオレンジがかっていて、色をくらべるのも楽しい星座です。',
    stars:[[36,10],[34,32],[30,54],[26,76],[60,14],[62,36],[66,58],[72,78]],
    edges:[[0,1],[1,2],[2,3],[4,5],[5,6],[6,7],[1,5]]},
   {name:'さそり座', emoji:'🦂',
    trivia:'夏の南の空に大きなS字。赤い心臓はアンタレス',
+   story:'さそりの心臓で赤く光るアンタレスは、「火星に張りあうもの」という意味の名前。夏の南の空に、大きなS字を描いてゆったり横たわっています。',
    stars:[[80,8],[68,16],[60,28],[54,42],[50,56],[42,68],[28,76],[14,70],[12,56]],
    edges:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8]]}
 ];
@@ -372,23 +389,6 @@ function startHoshi(r){
   svg.id = 'sky';
   svg.setAttribute('viewBox', '0 0 100 120');
   area.appendChild(svg);
-
-  /* 完成時に浮かび上がるイラストと星座名(最初は透明) */
-  const cx = Math.min(68, Math.max(32, pts.reduce((s,p) => s + p.x, 0) / n));
-  const cy = Math.min(80, Math.max(40, pts.reduce((s,p) => s + p.y, 0) / n));
-  const pic = document.createElementNS(NS, 'text');
-  pic.setAttribute('x', cx); pic.setAttribute('y', cy);
-  pic.setAttribute('text-anchor', 'middle');
-  pic.setAttribute('dominant-baseline', 'central');
-  pic.setAttribute('class', 'cpic');
-  pic.textContent = c.emoji;
-  svg.appendChild(pic);
-  const nameEl = document.createElementNS(NS, 'text');
-  nameEl.setAttribute('x', 50); nameEl.setAttribute('y', 116);
-  nameEl.setAttribute('text-anchor', 'middle');
-  nameEl.setAttribute('class', 'cname');
-  nameEl.textContent = c.name;
-  svg.appendChild(nameEl);
 
   const lit = new Array(n).fill(false);
   const drawn = new Array(c.edges.length).fill(false);
@@ -429,14 +429,27 @@ function startHoshi(r){
         if(cur === n){
           busy = true;
           svg.classList.add('doneGlow');
-          let note = '';
+          let newFound = false;
           if(!S.found.includes(c.name)){
-            S.found.push(c.name); save();
-            note = '<br><span style="font-size:12px;opacity:.7">せいざのきろくに 記録しました</span>';
+            S.found.push(c.name); save(); newFound = true;
           }
-          $('#msg').innerHTML = c.name + 'が できました ✨' + note;
-          setTimeout(() => svg.classList.add('reveal'), 300);
-          setTimeout(clearRound, 2800);
+          msg(c.name + 'が できました ✨');
+          /* 小話カード。読む速さは人それぞれなので自動では消さない */
+          setTimeout(() => {
+            const card = document.createElement('div');
+            card.className = 'storyCard';
+            card.innerHTML = '<div class="scName">' + c.name + '</div>'
+              + '<p class="scText">' + c.story + '</p>'
+              + (newFound ? '<div class="scNote">✦ せいざのきろくに 記録しました</div>' : '')
+              + '<div class="scNext">タップして つぎへ</div>';
+            card.addEventListener('pointerdown', () => {
+              card.style.pointerEvents = 'none';
+              card.classList.remove('show');
+              clearRound();
+            }, {once: true});
+            area.appendChild(card);
+            requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add('show')));
+          }, 1100);
         }
       } else if(!star.classList.contains('lit')){
         star.classList.remove('wig'); void star.getBBox();
